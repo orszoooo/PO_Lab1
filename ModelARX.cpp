@@ -5,34 +5,38 @@
 
 double ModelARX::symZaklocenie(double u) {
 	double zaklocenie = 0.0;
-	if (s_odchStd > 0.0) { //Bez instrukcji warunkowej program nie kompiluje sie dla odchStd == 0.0
+	if (s_odchStd > 0.0) { //Bez instrukcji warunkowej program nie kompiluje sie dla odchStd == 0.0. Standard zabrania podawania odchylenia standardowego 0 do std::normal_distribution
 		std::random_device rd;
 		std::mt19937 gen(rd());
-		std::normal_distribution<double> zaklNrm(0.0, s_odchStd);
-		zaklocenie = zaklNrm(gen);
+		std::normal_distribution<double> zaklocenieNrm(0.0, s_odchStd);
+		zaklocenie = zaklocenieNrm(gen);
 	}
 	
 	return zaklocenie;
 }
 
 double ModelARX::odpModelu(std::vector<double> wielomian, std::deque<double> kolejkaSyg) { //przetwarzanie wielomianów 
-	double odp = 0.0;
+	double odpowiedz = 0.0;
 
-	for (int i = 0; i < kolejkaSyg.size(); i++) {
-		odp += wielomian.at(i) * kolejkaSyg.at(i);
+	typedef std::vector<double>::iterator vec_itr;
+	typedef std::deque<double>::iterator deq_itr;
+
+	for (std::pair<vec_itr,deq_itr> i(wielomian.begin(), kolejkaSyg.begin()); 
+		i.first != wielomian.end() && i.second != kolejkaSyg.end(); ++i.first, ++i.second) {
+		odpowiedz += (*i.first) * (*i.second);
 	}
 
-	return odp;
+	return odpowiedz;
 }
 
 void ModelARX::setWspolWielA(std::vector<double> noweWspol) {
 	s_dA = static_cast<unsigned int>(noweWspol.size());
-	wspolWielA = noweWspol;
+	s_wspolWielA = noweWspol;
 }
 
 void ModelARX::setWspolWielB(std::vector<double> noweWspol) {
 	s_dB = static_cast<unsigned int>(noweWspol.size());
-	wspolWielB = noweWspol;
+	s_wspolWielB = noweWspol;
 }
 
 void ModelARX::setOpoznienieT(unsigned int wartZadana) {
@@ -61,20 +65,20 @@ double ModelARX::symuluj(double u) {
 	//double tmp_b = 0.0;
 
 	//Obs³uga opóŸnienia wejœcia
-	if (sygOpK.size() <= s_k) { 
-		sygOpK.push_front(u); //wprowadzenie opóŸnienia 
+	if (s_sygOpK.size() <= s_k) { 
+		s_sygOpK.push_front(u); //wprowadzenie opóŸnienia 
 	}
 	else {
-		sygOpK.push_front(u); //dodanie nowego sygna³u na koniec kolejki
+		s_sygOpK.push_front(u); //dodanie nowego sygna³u na koniec kolejki
 
-		if (sygWe.size() < s_dB) {
-			sygWe.push_front(sygOpK.front()); //przepisanie sygna³u z pocz¹tku kolejki do kolejki sygna³ów wejœciowych
+		if (s_sygWe.size() < s_dB) {
+			s_sygWe.push_front(s_sygOpK.front()); //przepisanie sygna³u z pocz¹tku kolejki do kolejki sygna³ów wejœciowych
 		}
 		else {
-			sygWe.push_front(sygOpK.front()); //przepisanie sygna³u z pocz¹tku kolejki do kolejki sygna³ów wejœciowych
-			sygWe.pop_back();
+			s_sygWe.push_front(s_sygOpK.front()); //przepisanie sygna³u z pocz¹tku kolejki do kolejki sygna³ów wejœciowych
+			s_sygWe.pop_back();
 		}
-		sygOpK.pop_back(); //usuniêcie najstarszego elementu w kolejce opóŸnienia
+		s_sygOpK.pop_back(); //usuniêcie najstarszego elementu w kolejce opóŸnienia
 
 		////Obliczanie odpowiedzi modelu(Przeniesionno do odpModelu)
 		//for (int i = 0; i < sygWe.size(); i++) {
@@ -87,14 +91,14 @@ double ModelARX::symuluj(double u) {
 	}
 
 	//Wyjœcie modelu
-	y_i = odpModelu(wspolWielB, sygWe) - odpModelu(wspolWielA, sygWy) + symZaklocenie(0.0);
+	y_i = odpModelu(s_wspolWielB, s_sygWe) - odpModelu(s_wspolWielA, s_sygWy) + symZaklocenie(0.0);
 
-	if (sygWy.size() < s_dA) {
-		sygWy.push_front(y_i);
+	if (s_sygWy.size() < s_dA) {
+		s_sygWy.push_front(y_i);
 	}
 	else {
-		sygWy.push_front(y_i);
-		sygWy.pop_back();
+		s_sygWy.push_front(y_i);
+		s_sygWy.pop_back();
 	}
 
 	return y_i;

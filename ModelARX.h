@@ -8,8 +8,8 @@ class ModelARX : ObiektSISO {
 private:
 	unsigned int s_dA, s_dB, s_k; //rozmiary buforów k - opóŸnienie transportowe
 	double s_odchStd;
-	std::vector<double> wspolWielA, wspolWielB;
-	std::deque<double> sygWe, sygWy, sygOpK;
+	std::vector<double> s_wspolWielA, s_wspolWielB;
+	std::deque<double> s_sygWe, s_sygWy, s_sygOpK;
 
 	double symZaklocenie(double u);
 	double odpModelu(std::vector<double> wielomian, std::deque<double> kolejkaSyg);
