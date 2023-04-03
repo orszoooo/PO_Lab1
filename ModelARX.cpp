@@ -2,6 +2,7 @@
 #include <iostream>
 #include <iomanip>
 #include <random>
+#include <numeric>
 
 double ModelARX::symZaklocenie(double u) {
 	double zaklocenie = 0.0;
@@ -18,13 +19,16 @@ double ModelARX::symZaklocenie(double u) {
 double ModelARX::odpModelu(std::vector<double> wielomian, std::deque<double> kolejkaSyg) { //przetwarzanie wielomianów 
 	double odpowiedz = 0.0;
 
-	typedef std::vector<double>::iterator vec_itr;
-	typedef std::deque<double>::iterator deq_itr;
+	//typedef std::vector<double>::iterator vec_itr;
+	//typedef std::deque<double>::iterator deq_itr;
 
-	for (std::pair<vec_itr,deq_itr> i(wielomian.begin(), kolejkaSyg.begin()); 
-		i.first != wielomian.end() && i.second != kolejkaSyg.end(); ++i.first, ++i.second) {
-		odpowiedz += (*i.first) * (*i.second);
-	}
+	//for (std::pair<vec_itr,deq_itr> i(wielomian.begin(), kolejkaSyg.begin()); 
+	//	i.first != wielomian.end() && i.second != kolejkaSyg.end(); ++i.first, ++i.second) {
+	//	odpowiedz += (*i.first) * (*i.second);
+	//}
+
+
+	odpowiedz = std::inner_product(kolejkaSyg.begin(), kolejkaSyg.end(), wielomian.begin(), 0.0);
 
 	return odpowiedz;
 }
@@ -94,11 +98,13 @@ void ModelARX::obslugaWyj(double& y_i)
 double ModelARX::symuluj(double u) {
 	double y_i = 0.0;
 
-	obslugaWej(u); 
+	//Obs³uga wejœcia
+	obslugaWej(u);
 
 	//Wyjœcie modelu
 	y_i = odpModelu(s_wspolWielB, s_sygWe) - odpModelu(s_wspolWielA, s_sygWy) + symZaklocenie(0.0);
 
+	//Obsluga wyjœcia
 	obslugaWyj(y_i);
 
 	return y_i;
@@ -115,7 +121,7 @@ ModelARX::~ModelARX() {
 
 }
 
-//////// TESTY
+//============================TESTY===================================//
 
 void Testy_ModelARX::test_ModelARX_brakPobudzenia() {
 	//Sygnatura testu:
