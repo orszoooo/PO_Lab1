@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <iomanip>
+
 #include "ModelARX.h"
 
 #define DEBUG  // ustaw na MAIN aby skompilowaæ program docelowy / ustaw na DEBUG aby skompilowaæ program testujacy 
@@ -195,6 +196,8 @@ int main()
 int main()
 {
 	//Twój program
+	Testy_ModelARX test;
+	test.uruchom();
 }
 
 #endif
