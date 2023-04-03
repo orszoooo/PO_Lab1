@@ -5,7 +5,7 @@
 
 double ModelARX::symZaklocenie(double u) {
 	double zaklocenie = 0.0;
-	if (s_odchStd > 0.0) { //Bez instrukcji warunkowej program nie kompiluje sie dla odchStd == 0.0. Standard zabrania podawania odchylenia standardowego 0 do std::normal_distribution
+	if (s_odchStd > 0.0) { //Bez instrukcji warunkowej program nie kompiluje sie dla odchStd == 0.0. Standard zabrania podawania odchylenia standardowego 0.0 do std::normal_distribution
 		std::random_device rd;
 		std::mt19937 gen(rd());
 		std::normal_distribution<double> zaklocenieNrm(0.0, s_odchStd);
@@ -59,13 +59,10 @@ void ModelARX::setOdchStd(double noweOdchStd) {
 	}
 }
 
-double ModelARX::symuluj(double u) {
-	double y_i = 0.0;
-	//double tmp_a = 0.0;
-	//double tmp_b = 0.0;
-
+void ModelARX::obslugaWej(double& u)
+{
 	//Obs³uga opóŸnienia wejœcia
-	if (s_sygOpK.size() <= s_k) { 
+	if (s_sygOpK.size() <= s_k) {
 		s_sygOpK.push_front(u); //wprowadzenie opóŸnienia 
 	}
 	else {
@@ -79,20 +76,12 @@ double ModelARX::symuluj(double u) {
 			s_sygWe.pop_back();
 		}
 		s_sygOpK.pop_back(); //usuniêcie najstarszego elementu w kolejce opóŸnienia
-
-		////Obliczanie odpowiedzi modelu(Przeniesionno do odpModelu)
-		//for (int i = 0; i < sygWe.size(); i++) {
-		//	tmp_b += wspolWielB.at(i) * sygWe.at(i);
-		//}
-
-		//for (int i = 0; i < sygWy.size(); i++) {
-		//	tmp_a += wspolWielA.at(i) * sygWy.at(i);
-		//}
 	}
+}
 
-	//Wyjœcie modelu
-	y_i = odpModelu(s_wspolWielB, s_sygWe) - odpModelu(s_wspolWielA, s_sygWy) + symZaklocenie(0.0);
-
+void ModelARX::obslugaWyj(double& y_i)
+{
+	//Dodanie wyniku do kolejki sygna³ów wyjœciowych
 	if (s_sygWy.size() < s_dA) {
 		s_sygWy.push_front(y_i);
 	}
@@ -100,6 +89,17 @@ double ModelARX::symuluj(double u) {
 		s_sygWy.push_front(y_i);
 		s_sygWy.pop_back();
 	}
+}
+
+double ModelARX::symuluj(double u) {
+	double y_i = 0.0;
+
+	obslugaWej(u); 
+
+	//Wyjœcie modelu
+	y_i = odpModelu(s_wspolWielB, s_sygWe) - odpModelu(s_wspolWielA, s_sygWy) + symZaklocenie(0.0);
+
+	obslugaWyj(y_i);
 
 	return y_i;
 }

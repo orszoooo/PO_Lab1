@@ -7,7 +7,7 @@
 class ModelARX : ObiektSISO {
 private:
 	unsigned int s_dA, s_dB, s_k; //rozmiary buforów k - opóŸnienie transportowe
-	double s_odchStd;
+	double s_odchStd;		//s_ oznacza sk³adow¹ klasy
 	std::vector<double> s_wspolWielA, s_wspolWielB;
 	std::deque<double> s_sygWe, s_sygWy, s_sygOpK;
 
@@ -20,6 +20,8 @@ public:
 	
 	void setOpoznienieT(unsigned int wartZadana);
 	void setOdchStd(double noweOdchStd);
+	void obslugaWej(double& u);
+	void obslugaWyj(double& y_i);
 	double symuluj(double u);
 
 	friend class Testy_ModelARX;
