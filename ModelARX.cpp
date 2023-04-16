@@ -17,20 +17,7 @@ double ModelARX::symZaklocenie(double u) {
 }
 
 double ModelARX::odpModelu(std::vector<double> wielomian, std::deque<double> kolejkaSyg) { //przetwarzanie wielomianów 
-	double odpowiedz = 0.0;
-
-	//typedef std::vector<double>::iterator vec_itr;
-	//typedef std::deque<double>::iterator deq_itr;
-
-	//for (std::pair<vec_itr,deq_itr> i(wielomian.begin(), kolejkaSyg.begin()); 
-	//	i.first != wielomian.end() && i.second != kolejkaSyg.end(); ++i.first, ++i.second) {
-	//	odpowiedz += (*i.first) * (*i.second);
-	//}
-
-
-	odpowiedz = std::inner_product(kolejkaSyg.begin(), kolejkaSyg.end(), wielomian.begin(), 0.0);
-
-	return odpowiedz;
+	return std::inner_product(kolejkaSyg.begin(), kolejkaSyg.end(), wielomian.begin(), 0.0);
 }
 
 void ModelARX::setWspolWielA(std::vector<double> noweWspol) {
