@@ -12,7 +12,7 @@ private:
 	std::deque<double> s_sygWe, s_sygWy, s_sygOpK;
 
 	double symZaklocenie(double u);
-	double odpModelu(std::vector<double>& wielomian, std::deque<double>& kolejkaSyg);
+	double odpModelu(std::vector<double>& wielomian, std::deque<double>& kolejkaSyg); //przekazanie przez referencje w celu unikniêcia kopiowania
 	void obslugaWej(double& u);
 	void obslugaWyj(double& y_i);
 public:
