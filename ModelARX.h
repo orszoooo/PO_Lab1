@@ -13,6 +13,8 @@ private:
 
 	double symZaklocenie(double u);
 	double odpModelu(std::vector<double> wielomian, std::deque<double> kolejkaSyg);
+	void obslugaWej(double& u);
+	void obslugaWyj(double& y_i);
 public:
 	//Settery wspó³czynników wielomianów A i B
 	void setWspolWielA(std::vector<double> noweWspol);
@@ -20,8 +22,6 @@ public:
 	
 	void setOpoznienieT(unsigned int wartZadana);
 	void setOdchStd(double noweOdchStd);
-	void obslugaWej(double& u);
-	void obslugaWyj(double& y_i);
 	double symuluj(double u);
 
 	friend class Testy_ModelARX;
