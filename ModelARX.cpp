@@ -16,7 +16,7 @@ double ModelARX::symZaklocenie(double u) {
 	return zaklocenie;
 }
 
-double ModelARX::odpModelu(std::vector<double> wielomian, std::deque<double> kolejkaSyg) { //przetwarzanie wielomianów 
+double ModelARX::odpModelu(std::vector<double>& wielomian, std::deque<double>& kolejkaSyg) { //przetwarzanie wielomianów 
 	return std::inner_product(kolejkaSyg.begin(), kolejkaSyg.end(), wielomian.begin(), 0.0);
 }
 
